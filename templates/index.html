@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AirNova | Air Quality Analytics</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">🌫️</div>
+            <div>
+                <h2>AirNova</h2>
+                <p>Air Quality Analytics</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <button class="nav-item active"
+                    onclick="showSection('overview', this)">
+                <span>🏠</span>
+                Overview
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('dataset', this)">
+                <span>🗂️</span>
+                Dataset
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('preprocessing', this)">
+                <span>🧹</span>
+                Preprocessing
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('eda', this)">
+                <span>📊</span>
+                Exploratory Data Analysis
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('linear-regression', this)">
+                <span>📈</span>
+                Linear Regression
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('random-forest', this)">
+                <span>🌲</span>
+                Random Forest
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('xgboost', this)">
+                <span>⚡</span>
+                XGBoost
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('comparison', this)">
+                <span>⚖️</span>
+                Model Comparison
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('advanced-analysis', this)">
+                <span>🧠</span>
+                Clustering, PCA & CV
+            </button>
+
+            <button class="nav-item"
+                    onclick="showSection('prediction', this)">
+                <span>🔮</span>
+                Prediction
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>ML Project</p>
+            <span>PM2.5 Prediction System</span>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <!-- TOP HEADER -->
+
+        <header class="top-header">
+            <div>
+                <p class="eyebrow">AIR QUALITY INTELLIGENCE</p>
+                <h1>Welcome to AirNova</h1>
+                <p class="header-description">
+                    Analyze air pollution patterns and predict PM2.5 levels
+                    using machine learning.
+                </p>
+            </div>
+
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                System Active
+            </div>
+        </header>
+
+
+        <!-- OVERVIEW -->
+
+        <section id="overview" class="content-section active-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">PROJECT OVERVIEW</p>
+                <h2>Air Quality Prediction Dashboard</h2>
+                <p>
+                    AirNova uses historical air-quality data and machine
+                    learning algorithms to estimate PM2.5 concentration.
+                </p>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon">📄</div>
+                    <div>
+                        <p>Total Records</p>
+                        <h3>{{ dataset_info.total_rows }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🏭</div>
+                    <div>
+                        <p>Monitoring Stations</p>
+                        <h3>{{ dataset_info.stations }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🧪</div>
+                    <div>
+                        <p>Input Features</p>
+                        <h3>{{ features|length }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div>
+                        <p>Best Model</p>
+                        <h3>Random Forest</h3>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="overview-grid">
+
+                <div class="glass-card">
+                    <h3>Project Objective</h3>
+                    <p>
+                        Predict PM2.5 concentration based on pollutant
+                        concentrations, weather conditions, time-related
+                        features, and monitoring station data.
+                    </p>
+
+                    <ul class="feature-list">
+                        <li>Analyze pollution distribution</li>
+                        <li>Handle missing values</li>
+                        <li>Compare regression models</li>
+                        <li>Predict PM2.5 concentration</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Dataset Timeline</h3>
+                    <div class="timeline-box">
+                        <strong>March 2013</strong>
+                        <span>to</span>
+                        <strong>February 2017</strong>
+                    </div>
+
+                    <p class="muted-text">
+                        Multi-station hourly air-quality observations from
+                        Beijing.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DATASET -->
+
+        <section id="dataset" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">DATA EXPLORATION</p>
+                <h2>Dataset Explorer</h2>
+                <p>
+                    Select a monitoring station to view its individual
+                    dataset records.
+                </p>
+            </div>
+
+            <div class="glass-card">
+
+                <div class="card-header">
+                    <div>
+                        <h3>Select Monitoring Station</h3>
+                        <p>Each station contains hourly observations.</p>
+                    </div>
+
+                    <select id="stationSelect"
+                            onchange="loadStationData()">
+
+                        <option value="">Choose a station</option>
+
+                        {% for station in stations %}
+                        <option value="{{ station }}">
+                            {{ station }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div id="stationSummary"
+                     class="station-summary hidden">
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="stationTable">
+                        <thead id="stationTableHead"></thead>
+                        <tbody id="stationTableBody">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    Select a station to display its dataset.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-note">
+                    Showing the first 100 records. The complete station
+                    dataset is available in the processed CSV file.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PREPROCESSING -->
+
+        <section id="preprocessing" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">DATA CLEANING</p>
+                <h2>Preprocessing Pipeline</h2>
+                <p>
+                    Missing values were identified and handled before model
+                    training.
+                </p>
+            </div>
+
+            <div class="process-flow">
+
+                <div class="process-step">
+                    <span>1</span>
+                    <h3>Load Data</h3>
+                    <p>Read station-wise CSV files.</p>
+                </div>
+
+                <div class="process-arrow">→</div>
+
+                <div class="process-step">
+                    <span>2</span>
+                    <h3>Combine Data</h3>
+                    <p>Merge all monitoring stations.</p>
+                </div>
+
+                <div class="process-arrow">→</div>
+
+                <div class="process-step">
+                    <span>3</span>
+                    <h3>Handle Missing Values</h3>
+                    <p>Use interpolation and filling methods.</p>
+                </div>
+
+                <div class="process-arrow">→</div>
+
+                <div class="process-step">
+                    <span>4</span>
+                    <h3>Sort Data</h3>
+                    <p>Sort by station and datetime.</p>
+                </div>
+
+            </div>
+
+
+            <div class="glass-card">
+
+                <div class="card-header">
+                    <div>
+                        <h3>Missing Values Before Preprocessing</h3>
+                        <p>
+                            Missing values detected in the combined dataset.
+                        </p>
+                    </div>
+
+                    <span class="warning-label">Before Cleaning</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Column</th>
+                            <th>Missing Values</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for column, count in missing_before.items() %}
+                        <tr>
+                            <td>{{ column }}</td>
+                            <td class="warning-number">{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="glass-card">
+
+                <div class="card-header">
+                    <div>
+                        <h3>How Missing Values Were Resolved</h3>
+                    </div>
+                </div>
+
+                <div class="method-grid">
+
+                    <div class="method-card">
+                        <span>🌡️</span>
+                        <h4>Numerical Columns</h4>
+                        <p>
+                            Missing numerical values were handled using
+                            interpolation and suitable filling techniques.
+                        </p>
+                    </div>
+
+                    <div class="method-card">
+                        <span>🧭</span>
+                        <h4>Categorical Columns</h4>
+                        <p>
+                            Missing wind-direction values were filled using
+                            forward-fill and backward-fill methods.
+                        </p>
+                    </div>
+
+                    <div class="method-card">
+                        <span>🕒</span>
+                        <h4>Datetime Creation</h4>
+                        <p>
+                            Year, month, day, and hour were combined into a
+                            datetime column.
+                        </p>
+                    </div>
+
+                    <div class="method-card">
+                        <span>🔃</span>
+                        <h4>Sorting</h4>
+                        <p>
+                            Data was sorted station-wise and chronologically.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="glass-card">
+
+                <div class="card-header">
+                    <div>
+                        <h3>Preprocessing Result</h3>
+                        <p>Missing values after preprocessing.</p>
+                    </div>
+
+                    <span class="success-label">After Cleaning</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Column</th>
+                            <th>Missing Before</th>
+                            <th>Missing After</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for column, count in missing_before.items() %}
+                        <tr>
+                            <td>{{ column }}</td>
+                            <td>{{ count }}</td>
+                            <td class="success-number">0</td>
+                            <td>
+                                <span class="clean-badge">Cleaned</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="result-banner">
+                    <strong>All missing values were successfully handled.</strong>
+                    <span>Final missing-value count: 0</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EDA -->
+
+        <section id="eda" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">VISUAL ANALYTICS</p>
+                <h2>Exploratory Data Analysis</h2>
+                <p>
+                    Visual exploration of PM2.5 trends, distributions,
+                    correlations, and pollutant relationships.
+                </p>
+            </div>
+
+            <div class="image-grid">
+
+                <div class="image-card">
+                    <h3>PM2.5 Distribution</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_distribution.png') }}"
+                         alt="PM2.5 Distribution">
+                </div>
+
+                <div class="image-card">
+                    <h3>Correlation Heatmap</h3>
+                    <img src="{{ url_for('static', filename='plots/correlation_heatmap.png') }}"
+                         alt="Correlation Heatmap">
+                </div>
+
+                <div class="image-card">
+                    <h3>PM2.5 by Hour</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_by_hour.png') }}"
+                         alt="PM2.5 by Hour">
+                </div>
+
+                <div class="image-card">
+                    <h3>PM2.5 by Month</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_by_month.png') }}"
+                         alt="PM2.5 by Month">
+                </div>
+
+                <div class="image-card">
+                    <h3>PM2.5 by Station</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_by_station.png') }}"
+                         alt="PM2.5 by Station">
+                </div>
+
+                <div class="image-card">
+                    <h3>PM2.5 Daily Trend</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_daily_trend.png') }}"
+                         alt="PM2.5 Daily Trend">
+                </div>
+
+                <div class="image-card">
+                    <h3>PM2.5 vs PM10</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_vs_pm10.png') }}"
+                         alt="PM2.5 vs PM10">
+                </div>
+
+                <div class="image-card">
+                    <h3>PM2.5 vs Temperature</h3>
+                    <img src="{{ url_for('static', filename='plots/pm25_vs_temperature.png') }}"
+                         alt="PM2.5 vs Temperature">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LINEAR REGRESSION -->
+
+        <section id="linear-regression" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">BASELINE MODEL</p>
+                <h2>Linear Regression</h2>
+                <p>
+                    A simple baseline regression model used for comparison.
+                </p>
+            </div>
+
+            <div class="formula-grid">
+
+                <div class="formula-card">
+                    <h3>Linear Regression Equation</h3>
+                    <div class="formula">
+                        ŷ = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ
+                    </div>
+                    <p>
+                        The prediction is calculated as a weighted sum of
+                        input features plus an intercept.
+                    </p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>Mean Absolute Error</h3>
+                    <div class="formula">
+                        MAE = (1/n) Σ |yᵢ − ŷᵢ|
+                    </div>
+                    <p>
+                        Measures the average absolute prediction error.
+                    </p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>Root Mean Squared Error</h3>
+                    <div class="formula">
+                        RMSE = √[(1/n) Σ(yᵢ − ŷᵢ)²]
+                    </div>
+                    <p>
+                        Penalizes larger errors more strongly.
+                    </p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>R² Score</h3>
+                    <div class="formula">
+                        R² = 1 − SSE/SST
+                    </div>
+                    <p>
+                        Measures how much variation in PM2.5 is explained
+                        by the model.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+                    <p>MAE</p>
+                    <h3>{{ linear_results.mae }}</h3>
+                </div>
+
+                <div class="metric-card">
+                    <p>RMSE</p>
+                    <h3>{{ linear_results.rmse }}</h3>
+                </div>
+
+                <div class="metric-card">
+                    <p>R² Score</p>
+                    <h3>{{ linear_results.r2 }}%</h3>
+                </div>
+
+            </div>
+
+            <div class="image-grid two-columns">
+
+                <div class="image-card">
+                    <h3>Actual vs Predicted PM2.5</h3>
+                    <img src="{{ url_for('static', filename='plots/actual_vs_predicted.png') }}"
+                         alt="Linear Regression Actual vs Predicted">
+                </div>
+
+                <div class="image-card">
+                    <h3>Feature Coefficients</h3>
+                    <img src="{{ url_for('static', filename='plots/feature_coefficients.png') }}"
+                         alt="Feature Coefficients">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RANDOM FOREST -->
+
+        <section id="random-forest" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">ENSEMBLE LEARNING</p>
+                <h2>Random Forest Regression</h2>
+                <p>
+                    Random Forest combines multiple decision trees to improve
+                    prediction accuracy and reduce overfitting.
+                </p>
+            </div>
+
+            <div class="glass-card explanation-card">
+
+                <h3>How Random Forest Works</h3>
+
+                <p>
+                    Random Forest creates many decision trees using different
+                    random samples of the training data. Each tree predicts
+                    a PM2.5 value, and the final prediction is the average of
+                    all tree predictions.
+                </p>
+
+                <div class="formula">
+                    Final Prediction = Average of all Tree Predictions
+                </div>
+
+            </div>
+
+            <div class="metric-grid">
+
+                <div class="metric-card highlight">
+                    <p>MAE</p>
+                    <h3>{{ random_forest_results.mae }}</h3>
+                    <span>Lower is better</span>
+                </div>
+
+                <div class="metric-card highlight">
+                    <p>RMSE</p>
+                    <h3>{{ random_forest_results.rmse }}</h3>
+                    <span>Lower is better</span>
+                </div>
+
+                <div class="metric-card highlight">
+                    <p>R² Score</p>
+                    <h3>{{ random_forest_results.r2 }}%</h3>
+                    <span>Higher is better</span>
+                </div>
+
+            </div>
+
+            <div class="image-grid two-columns">
+
+                <div class="image-card">
+                    <h3>Random Forest Feature Importance</h3>
+                    <img src="{{ url_for('static', filename='plots/random_forest_feature_importance.png') }}"
+                         alt="Random Forest Feature Importance">
+                </div>
+
+                <div class="image-card">
+                    <h3>Random Forest Actual vs Predicted</h3>
+                    <img src="{{ url_for('static', filename='plots/random_forest_actual_vs_predicted.png') }}"
+                         alt="Random Forest Actual vs Predicted">
+                </div>
+
+            </div>
+
+            <div class="glass-card">
+                <h3>Interpretation</h3>
+                <p>
+                    Random Forest achieved the best performance among the
+                    compared models. PM10 and CO contributed strongly to
+                    PM2.5 prediction.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- XGBOOST -->
+
+        <section id="xgboost" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">BOOSTING ALGORITHM</p>
+                <h2>XGBoost Regression</h2>
+                <p>
+                    XGBoost builds trees sequentially, where each new tree
+                    tries to correct the errors made by previous trees.
+                </p>
+            </div>
+
+            <div class="glass-card explanation-card">
+
+                <h3>How XGBoost Works</h3>
+
+                <p>
+                    XGBoost uses gradient boosting. Trees are added one after
+                    another, and each tree improves the overall model by
+                    reducing the previous prediction errors.
+                </p>
+
+                <div class="formula">
+                    New Model = Previous Model + Learning Rate × New Tree
+                </div>
+
+            </div>
+
+            <div class="formula-grid">
+
+                <div class="formula-card">
+                    <h3>MAE</h3>
+                    <div class="formula">
+                        MAE = Σ|Actual − Predicted| / n
+                    </div>
+                    <p>Average absolute prediction error.</p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>RMSE</h3>
+                    <div class="formula">
+                        RMSE = √[Σ(Actual − Predicted)² / n]
+                    </div>
+                    <p>Root mean squared prediction error.</p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>R²</h3>
+                    <div class="formula">
+                        R² = 1 − SSE/SST
+                    </div>
+                    <p>Explained variance of the model.</p>
+                </div>
+
+            </div>
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+                    <p>MAE</p>
+                    <h3>{{ xgboost_results.mae }}</h3>
+                </div>
+
+                <div class="metric-card">
+                    <p>RMSE</p>
+                    <h3>{{ xgboost_results.rmse }}</h3>
+                </div>
+
+                <div class="metric-card">
+                    <p>R² Score</p>
+                    <h3>{{ xgboost_results.r2 }}%</h3>
+                </div>
+
+            </div>
+
+            <div class="image-grid two-columns">
+
+                <div class="image-card">
+                    <h3>XGBoost Feature Importance</h3>
+                    <img src="{{ url_for('static', filename='plots/xgboost_feature_importance.png') }}"
+                         alt="XGBoost Feature Importance">
+                </div>
+
+                <div class="image-card">
+                    <h3>XGBoost Actual vs Predicted</h3>
+                    <img src="{{ url_for('static', filename='plots/xgboost_actual_vs_predicted.png') }}"
+                         alt="XGBoost Actual vs Predicted">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MODEL COMPARISON -->
+
+        <section id="comparison" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">PERFORMANCE ANALYSIS</p>
+                <h2>Model Comparison</h2>
+                <p>
+                    Comparison of Linear Regression, Random Forest, and
+                    XGBoost based on regression metrics.
+                </p>
+            </div>
+
+            <div class="glass-card">
+
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+
+                        <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>MAE</th>
+                            <th>RMSE</th>
+                            <th>R² Score</th>
+                            <th>Result</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr>
+                            <td>Linear Regression</td>
+                            <td>20.7314</td>
+                            <td>31.6597</td>
+                            <td>84.67%</td>
+                            <td>
+                                <span class="neutral-badge">Baseline</span>
+                            </td>
+                        </tr>
+
+                        <tr class="best-row">
+                            <td>Random Forest</td>
+                            <td>{{ random_forest_results.mae }}</td>
+                            <td>{{ random_forest_results.rmse }}</td>
+                            <td>{{ random_forest_results.r2 }}%</td>
+                            <td>
+                                <span class="best-badge">Best Model</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>XGBoost</td>
+                            <td>13.4037</td>
+                            <td>21.4716</td>
+                            <td>92.95%</td>
+                            <td>
+                                <span class="good-badge">Strong</span>
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="formula-grid">
+
+                <div class="formula-card">
+                    <h3>MAE Calculation</h3>
+                    <div class="formula">
+                        MAE = 1/n Σ|y − ŷ|
+                    </div>
+                    <p>
+                        Lower MAE means predictions are closer to actual
+                        values on average.
+                    </p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>RMSE Calculation</h3>
+                    <div class="formula">
+                        RMSE = √(1/n Σ(y − ŷ)²)
+                    </div>
+                    <p>
+                        Lower RMSE means fewer large prediction errors.
+                    </p>
+                </div>
+
+                <div class="formula-card">
+                    <h3>R² Calculation</h3>
+                    <div class="formula">
+                        R² = 1 − Σ(y − ŷ)² / Σ(y − ȳ)²
+                    </div>
+                    <p>
+                        Higher R² means the model explains more variation.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="glass-card winner-card">
+                <h3>🏆 Best Performing Model: Random Forest</h3>
+                <p>
+                    Random Forest has the lowest MAE and RMSE and the highest
+                    R² score among the three models.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- PREDICTION -->
+
+                <!-- ADVANCED ML ANALYSIS -->
+
+        <section id="advanced-analysis" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">UNSUPERVISED + MODEL VALIDATION</p>
+                <h2>Clustering, PCA & 10-Fold Cross-Validation</h2>
+                <p>
+                    Discover groups of similar air-quality observations, visualize
+                    the feature space using PCA, and estimate Random Forest
+                    performance across ten validation folds.
+                </p>
+            </div>
+
+            <div class="analysis-actions">
+                <button class="predict-button" id="runAdvancedAnalysis" onclick="loadAdvancedAnalysis(true)">
+                    Run / Refresh Analysis
+                </button>
+                <span id="advancedStatus" class="muted-text">Analysis runs on demand and may take a short while.</span>
+            </div>
+
+            <div id="advancedError" class="glass-card hidden"></div>
+
+            <div class="stats-grid advanced-stats">
+                <div class="stat-card"><div class="stat-icon">🧩</div><div><p>Clustering</p><h3>K-Means (K=4)</h3></div></div>
+                <div class="stat-card"><div class="stat-icon">📉</div><div><p>PCA Components</p><h3>2D Projection</h3></div></div>
+                <div class="stat-card"><div class="stat-icon">🔟</div><div><p>Validation</p><h3>10 Folds</h3></div></div>
+                <div class="stat-card"><div class="stat-icon">🌲</div><div><p>Evaluated Model</p><h3>Random Forest</h3></div></div>
+            </div>
+
+            <div class="glass-card">
+                <div class="card-header">
+                    <div>
+                        <h3>K-Means Clustering</h3>
+                        <p>Groups records by similar pollution and weather patterns.</p>
+                    </div>
+                    <span class="good-badge">Unsupervised learning</span>
+                </div>
+                <div id="clusterSummary" class="cluster-counts">
+                    <p class="muted-text">Click “Run / Refresh Analysis” to calculate cluster sizes.</p>
+                </div>
+                <p class="table-note">
+                    Cluster numbers are arbitrary group labels; they do not automatically mean low, medium, or high pollution.
+                </p>
+            </div>
+
+            <div class="glass-card">
+                <div class="card-header">
+                    <div>
+                        <h3>PCA Projection</h3>
+                        <p>Each dot is an observation projected onto the first two principal components.</p>
+                    </div>
+                    <span id="pcaVariance" class="good-badge">Explained variance: —</span>
+                </div>
+                <canvas id="pcaCanvas" width="900" height="420" class="pca-canvas" aria-label="PCA scatter plot"></canvas>
+                <p class="table-note">For readability, the plot displays up to 1,500 sampled observations. Standardization is applied before PCA.</p>
+            </div>
+
+            <div class="glass-card">
+                <div class="card-header">
+                    <div>
+                        <h3>10-Fold Cross-Validation</h3>
+                        <p>The data sample is split into ten folds. Each fold is tested once while the other nine folds train the model.</p>
+                    </div>
+                    <span class="good-badge">Regression metrics</span>
+                </div>
+                <div class="metric-grid">
+                    <div class="metric-card"><p>Mean R²</p><h3 id="cvMeanR2">—</h3><span>Higher is better</span></div>
+                    <div class="metric-card"><p>Mean MAE</p><h3 id="cvMeanMae">—</h3><span>Lower is better (µg/m³)</span></div>
+                    <div class="metric-card"><p>Mean RMSE</p><h3 id="cvMeanRmse">—</h3><span>Lower is better (µg/m³)</span></div>
+                </div>
+                <p id="cvDetails" class="table-note"></p>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Fold</th><th>R² (%)</th><th>MAE</th><th>RMSE</th></tr></thead>
+                        <tbody id="cvTableBody"><tr><td colspan="4" class="empty-state">Run the analysis to see fold results.</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+
+<section id="prediction" class="content-section">
+
+            <div class="section-heading">
+                <p class="eyebrow">LIVE PREDICTION</p>
+                <h2>Predict PM2.5 Concentration</h2>
+                <p>
+                    Enter pollutant and weather values to predict PM2.5.
+                </p>
+            </div>
+
+            <div class="prediction-layout">
+
+                <div class="glass-card">
+
+                    <h3>Input Environmental Parameters</h3>
+
+                    <form id="predictionForm">
+
+                        <div class="form-grid">
+
+                            {% for feature in features %}
+                            <div class="form-group">
+                                <label for="{{ feature }}">
+                                    {{ feature }}
+                                </label>
+
+                                <input
+                                    type="number"
+                                    step="any"
+                                    id="{{ feature }}"
+                                    name="{{ feature }}"
+                                    placeholder="Enter {{ feature }}"
+                                    required
+                                >
+                            </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <button type="submit" class="predict-button">
+                            🔮 Predict PM2.5
+                        </button>
+
+                    </form>
+
+                    <div id="predictionResult"
+                         class="prediction-result hidden">
+                    </div>
+
+                </div>
+
+
+                <div class="glass-card">
+
+                    <div class="card-header">
+                        <div>
+                            <h3>Prediction History</h3>
+                            <p>
+                                All predictions made from this browser.
+                            </p>
+                        </div>
+
+                        <button class="clear-button"
+                                onclick="clearPredictionHistory()">
+                            Clear History
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+
+                            <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Predicted PM2.5</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="historyTableBody">
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <p id="emptyHistory"
+                       class="empty-state">
+                        No predictions made yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

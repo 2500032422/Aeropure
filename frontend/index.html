@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AirNova | Air Quality Forecast</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+
+    <div class="logo">
+        <span>🌿</span>
+        <div>
+            <h2>AirNova</h2>
+            <p>Air Quality Intelligence</p>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#forecast">Forecast</a>
+        <a href="#insights">Insights</a>
+        <a href="#about">About</a>
+    </nav>
+
+</header>
+
+
+<!-- HERO -->
+<section class="hero" id="dashboard">
+
+    <div class="hero-text">
+
+        <p class="tag">AI POWERED AIR QUALITY MONITORING</p>
+
+        <h1>
+            Breathe Better.<br>
+            <span>Know the Air.</span>
+        </h1>
+
+        <p class="description">
+            AirNova uses machine learning to analyze air-quality
+            and weather data and forecast future PM2.5 levels.
+        </p>
+
+        <button onclick="scrollToForecast()">
+            Check Air Quality →
+        </button>
+
+    </div>
+
+
+    <div class="air-card">
+
+        <div class="card-top">
+            <span>Current Air Quality</span>
+            <span class="status-dot"></span>
+        </div>
+
+        <div class="aq-value">
+            <span id="currentPM">86</span>
+            <small>µg/m³</small>
+        </div>
+
+        <div class="aq-status">
+            MODERATE
+        </div>
+
+        <p>PM2.5 concentration</p>
+
+        <div class="location">
+            📍 Aotizhongxin, Beijing
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- STATISTICS -->
+<section class="stats">
+
+    <div class="stat-card">
+        <span>📡</span>
+        <div>
+            <h3>12</h3>
+            <p>Monitoring Stations</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <span>📊</span>
+        <div>
+            <h3>420K+</h3>
+            <p>Air Quality Records</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <span>⏱️</span>
+        <div>
+            <h3>Hourly</h3>
+            <p>Measurements</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <span>🤖</span>
+        <div>
+            <h3>ML</h3>
+            <p>Forecasting</p>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- FORECAST -->
+<section class="section" id="forecast">
+
+    <div class="section-heading">
+
+        <p class="tag">MACHINE LEARNING FORECAST</p>
+
+        <h2>PM2.5 Forecast</h2>
+
+        <p>
+            View predicted PM2.5 levels for the selected monitoring station.
+        </p>
+
+    </div>
+
+
+    <div class="controls">
+
+        <div>
+            <label>Monitoring Station</label>
+
+            <select id="station">
+                <option>Aotizhongxin</option>
+                <option>Changping</option>
+                <option>Dingling</option>
+                <option>Dongsi</option>
+                <option>Guanyuan</option>
+                <option>Gucheng</option>
+                <option>Huairou</option>
+                <option>Nongzhanguan</option>
+                <option>Shunyi</option>
+                <option>Tiantan</option>
+                <option>Wanliu</option>
+                <option>Wanshouxigong</option>
+            </select>
+
+        </div>
+
+
+        <div>
+            <label>Forecast Period</label>
+
+            <select id="period">
+                <option>Next 6 Hours</option>
+                <option>Next 12 Hours</option>
+                <option>Next 24 Hours</option>
+            </select>
+        </div>
+
+
+        <button onclick="generateForecast()">
+            Generate Forecast
+        </button>
+
+    </div>
+
+
+    <!-- CHART -->
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+
+            <div>
+                <h3>Predicted PM2.5</h3>
+                <p id="selectedStation">
+                    Aotizhongxin • Next 24 Hours
+                </p>
+            </div>
+
+            <div class="prediction">
+                <span>Next Hour</span>
+                <strong id="predictionValue">92</strong>
+                <small>µg/m³</small>
+            </div>
+
+        </div>
+
+        <canvas id="forecastChart"></canvas>
+
+    </div>
+
+</section>
+
+
+<!-- AIR QUALITY LEVELS -->
+<section class="section">
+
+    <div class="section-heading">
+
+        <p class="tag">AIR QUALITY INDEX</p>
+
+        <h2>Understanding PM2.5</h2>
+
+        <p>
+            PM2.5 indicates the concentration of fine particulate matter
+            in the air.
+        </p>
+
+    </div>
+
+
+    <div class="quality-grid">
+
+        <div class="quality-card good">
+            <div class="quality-number">0–35</div>
+            <h3>Good</h3>
+            <p>Air quality is considered healthy.</p>
+        </div>
+
+
+        <div class="quality-card moderate">
+            <div class="quality-number">36–75</div>
+            <h3>Moderate</h3>
+            <p>Acceptable air quality for most people.</p>
+        </div>
+
+
+        <div class="quality-card unhealthy">
+            <div class="quality-number">76–150</div>
+            <h3>Unhealthy</h3>
+            <p>Sensitive groups may experience effects.</p>
+        </div>
+
+
+        <div class="quality-card danger">
+            <div class="quality-number">150+</div>
+            <h3>Very High</h3>
+            <p>Health effects become more significant.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- INSIGHTS -->
+<section class="section insights" id="insights">
+
+    <div class="section-heading">
+
+        <p class="tag">DATA INSIGHTS</p>
+
+        <h2>What the Data Tells Us</h2>
+
+    </div>
+
+
+    <div class="insight-grid">
+
+        <div class="insight-card">
+
+            <div class="icon">🌙</div>
+
+            <h3>Hourly Pattern</h3>
+
+            <p>
+                PM2.5 shows strong variation throughout the day,
+                with higher levels during evening hours.
+            </p>
+
+        </div>
+
+
+        <div class="insight-card">
+
+            <div class="icon">❄️</div>
+
+            <h3>Seasonal Pattern</h3>
+
+            <p>
+                Pollution levels tend to increase during colder
+                months and decrease during summer.
+            </p>
+
+        </div>
+
+
+        <div class="insight-card">
+
+            <div class="icon">🌬️</div>
+
+            <h3>Weather Impact</h3>
+
+            <p>
+                Wind speed, temperature, pressure and other
+                meteorological variables influence air quality.
+            </p>
+
+        </div>
+
+
+        <div class="insight-card">
+
+            <div class="icon">📈</div>
+
+            <h3>PM2.5 & PM10</h3>
+
+            <p>
+                PM2.5 and PM10 show a strong positive relationship
+                in the dataset.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+<section class="about" id="about">
+
+    <div>
+
+        <p class="tag">ABOUT AEROPURE</p>
+
+        <h2>Machine Learning for Cleaner Air</h2>
+
+        <p>
+            AirNova analyzes the Beijing Multi-Site Air-Quality Dataset,
+            containing hourly measurements from 12 monitoring stations
+            between 2013 and 2017.
+        </p>
+
+        <p>
+            The system combines historical pollution measurements,
+            weather conditions and temporal patterns to forecast
+            future PM2.5 concentrations.
+        </p>
+
+    </div>
+
+    <div class="about-box">
+
+        <h3>Dataset</h3>
+
+        <p>Beijing Multi-Site Air-Quality Data</p>
+
+        <hr>
+
+        <h3>Records</h3>
+
+        <p>420,768 hourly observations</p>
+
+        <hr>
+
+        <h3>Stations</h3>
+
+        <p>12 monitoring stations</p>
+
+        <hr>
+
+        <h3>Target</h3>
+
+        <p>Future PM2.5 concentration</p>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <div>
+        <h2>🌿 AirNova</h2>
+        <p>AI-powered air quality forecasting.</p>
+    </div>
+
+    <p>© 2026 AirNova • Machine Learning Project</p>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
